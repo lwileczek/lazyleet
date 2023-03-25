@@ -1,0 +1,76 @@
+package main
+
+// The difference in this file compared to bruteforce is I tried to get rid of large numbers which didn't work.
+// Line 28
+
+import (
+	"fmt"
+	"sort"
+)
+
+func main() {
+	n := []int{2, 7, 15, 11}
+	idx := twoSum(n, 9)
+	fmt.Println(idx)
+
+	//Two
+	nums := []int{3, 2, 4}
+	idx1 := twoSum(nums, 6)
+	fmt.Println(idx1)
+
+	//Three
+	numbers := []int{3, 3}
+	idx2 := twoSum(numbers, 6)
+	fmt.Println(idx2)
+}
+
+func twoSum(nums []int, target int) []int {
+	idxs := sortAndReturnIdxs(nums) // also sorts the array
+	cutoff := len(nums) - 1
+	for idx := len(nums) - 1; idx > 0; idx-- {
+		if nums[idx] < target {
+			break
+		}
+		cutoff--
+	}
+	filteredNums := nums[:cutoff+1]
+	begin := 0
+	ans := checkSum(filteredNums, begin, cutoff, target)
+	return []int{idxs[ans[0]], idxs[ans[1]]}
+}
+
+func checkSum(nums []int, start int, end int, target int) []int {
+	v := nums[start] + nums[end]
+	switch {
+	case v == target:
+		return []int{start, end}
+	case v > target:
+		return checkSum(nums, start, end-1, target)
+	case v < target:
+		return checkSum(nums, start+1, end, target)
+	default:
+		return []int{0, 1}
+	}
+}
+
+type sortable struct {
+	nums, idxs []int
+}
+
+func (s sortable) Len() int           { return len(s.nums) }
+func (s sortable) Less(i, j int) bool { return s.nums[i] < s.nums[j] }
+func (s sortable) Swap(i, j int) {
+	s.nums[i], s.nums[j] = s.nums[j], s.nums[i]
+	s.idxs[i], s.idxs[j] = s.idxs[j], s.idxs[i]
+}
+
+func sortAndReturnIdxs(nums []int) []int {
+	idxs := make([]int, len(nums))
+	for i := range idxs {
+		idxs[i] = i
+	}
+
+	sort.Sort(sortable{nums, idxs})
+
+	return idxs
+}

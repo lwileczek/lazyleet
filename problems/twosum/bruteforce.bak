@@ -1,0 +1,96 @@
+package main
+
+/*
+Answer was correct but not best: https://leetcode.com/submissions/detail/831408331/
+
+link: https://leetcode.com/problems/two-sum/
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+You can return the answer in any order.
+
+
+Example 1:
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+
+Example 2:
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+
+Example 3:
+Input: nums = [3,3], target = 6
+Output: [0,1]
+
+Bonus if you can find an algorithm less than O(n^2)
+*/
+
+import (
+	"fmt"
+	"sort"
+)
+
+func main() {
+	n := []int{2, 7, 15, 11}
+	idx := twoSum(n, 9)
+	fmt.Println(idx)
+
+	//Two
+	nums := []int{3, 2, 4}
+	idx1 := twoSum(nums, 6)
+	fmt.Println(idx1)
+
+	//Three
+	numbers := []int{3, 3}
+	idx2 := twoSum(numbers, 6)
+	fmt.Println(idx2)
+
+	//Test four
+	test4 := []int{0, 4, 3, 0}
+	ans4 := twoSum(test4, 0)
+	fmt.Println(ans4)
+
+}
+
+func twoSum(nums []int, target int) []int {
+	idxs := sortAndReturnIdxs(nums) // also sorts the array
+	begin := 0
+	ans := checkSum(nums, begin, len(nums)-1, target)
+	return []int{idxs[ans[0]], idxs[ans[1]]}
+}
+
+func checkSum(nums []int, start int, end int, target int) []int {
+	v := nums[start] + nums[end]
+	switch {
+	case v == target:
+		return []int{start, end}
+	case v > target:
+		return checkSum(nums, start, end-1, target)
+	case v < target:
+		return checkSum(nums, start+1, end, target)
+	default:
+		return []int{0, 1}
+	}
+}
+
+type sortable struct {
+	nums, idxs []int
+}
+
+func (s sortable) Len() int           { return len(s.nums) }
+func (s sortable) Less(i, j int) bool { return s.nums[i] < s.nums[j] }
+func (s sortable) Swap(i, j int) {
+	s.nums[i], s.nums[j] = s.nums[j], s.nums[i]
+	s.idxs[i], s.idxs[j] = s.idxs[j], s.idxs[i]
+}
+
+func sortAndReturnIdxs(nums []int) []int {
+	idxs := make([]int, len(nums))
+	for i := range idxs {
+		idxs[i] = i
+	}
+
+	sort.Sort(sortable{nums, idxs})
+
+	return idxs
+}
