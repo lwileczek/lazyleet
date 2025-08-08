@@ -1,0 +1,8 @@
+default:
+    just run
+
+run:
+    go run ./p2.go
+
+test:
+    go test *.go
