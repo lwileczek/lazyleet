@@ -5,45 +5,63 @@ import (
 )
 
 func TestToLinkedList(t *testing.T) {
-	linkedList := FromSlice([]int{2, 4, 3})
-	i := linkedList.Int()
-	if i != 342 {
-		t.Errorf("failed to construct linked list\n\tExpected %d, got %d\n\t%+v", 342, i, linkedList)
+	type TestCase struct {
+		input    []int
+		expected string
+	}
+
+	testCases := []TestCase{
+		{
+			input: []int{2, 4, 3},
+			expected: "342",
+		},
+		{
+			input: []int{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+			expected: "1000000000000000000000000000001",
+		},
+	}
+
+	for _, tc := range testCases {
+		linkedList := FromSlice(tc.input)
+		i := linkedList.NumString()
+		if i != tc.expected {
+			t.Errorf("failed to construct linked list\n\tExpected %s, got %s\n\t%+v", tc.expected, i, linkedList)
+		}
 	}
 }
 
 func TestFromLinkedList(t *testing.T) {
 	type TestCase struct {
-		List     ListNode
+		List     *ListNode
 		Expected int
 		Msg      string
 	}
 
 	testCases := []TestCase{
 		{
-			List: ListNode{
+			List: &ListNode{
 				Val: 2,
 			},
 			Expected: 2,
-			Msg:      "Single number, easy mode",
+			Msg:      "singleton",
 		},
 		{
-			List: ListNode{
-				Val: 2,
-				Next: &ListNode{
-					Val: 4,
-					Next: &ListNode{
-						Val: 3,
-					},
-				},
-			},
+			List: &ListNode{ },
+			Expected: 0,
+			Msg:      "nil case",
+		},
+		{
+			List: FromSlice([]int{2, 4, 3}),
 			Expected: 342,
-			Msg:      "First example from problem, [2,4,3] => 342",
+			Msg:      "single slice",
 		},
 	}
 
+
+
+
 	for _, tc := range testCases {
-		i := tc.List.Int()
+		i := ToInt(tc.List)
 		if i != tc.Expected {
 			t.Errorf("Failed to convert list to an int\n\tgot %d but expected %d\n", i, tc.Expected)
 		}
@@ -72,6 +90,31 @@ func TestAddTwoNumbers(t *testing.T) {
 			l1:       FromSlice([]int{9,9,9,9,9,9,9}),
 			l2:       FromSlice([]int{9,9,9,9}),
 			expected: FromSlice([]int{8,9,9,9,0,0,0,1}),
+		},
+		{
+			l1:       FromSlice([]int{1}),
+			l2:       FromSlice([]int{1}),
+			expected: FromSlice([]int{2}),
+		},
+		{
+			l1:       FromSlice([]int{5}),
+			l2:       FromSlice([]int{5}),
+			expected: FromSlice([]int{0, 1}),
+		},
+		{
+			l1:       FromSlice([]int{3, 2, 1}),
+			l2:       FromSlice([]int{5, 4}),
+			expected: FromSlice([]int{8, 6, 1}),
+		},
+		{
+			l1:       FromSlice([]int{9, 9}),
+			l2:       FromSlice([]int{1}),
+			expected: FromSlice([]int{0, 0, 1}),
+		},
+		{
+			l1:       FromSlice([]int{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}),
+			l2:       FromSlice([]int{5,6,4}),
+			expected: FromSlice([]int{6,6,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}),
 		},
 	}
 
