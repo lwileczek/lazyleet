@@ -1,0 +1,10 @@
+default:
+    just -l
+    
+# run the main file
+run:
+    cargo run
+
+# check the test cases
+test:
+    cargo test
