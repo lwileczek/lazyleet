@@ -1,3 +1,4 @@
+// run a single example
 fn main() {
     let nums = vec![1, 2, 3];
     let p = permute(nums.clone());
@@ -8,7 +9,10 @@ fn main() {
     println!("]");
 }
 
-
+// permute create all of the permutations of an vector of numbers
+// Trying a mini-impprovmeent for cases of length 2 or fewer
+// otherwise use dfs to build all permutations
+// This would work with DFS only
 fn permute(nums: Vec<i32>) -> Vec<Vec<i32>> {
     let p = match nums.len() {
         0 => Vec::new(),
@@ -20,39 +24,40 @@ fn permute(nums: Vec<i32>) -> Vec<Vec<i32>> {
             n.reverse();
             v.push(n);
             v
-        },
+        }
         _ => dfs(nums),
     };
 
     p
 }
 
-// depth first search (dfs) 
+// depth first search (dfs)
 // recursively dive into the vector
 // building each permutation
 fn dfs(nums: Vec<i32>) -> Vec<Vec<i32>> {
-    let mut vecs: Vec<Vec<i32>>  = Vec::new();
-    if nums.len() <= 1 {
-        vecs.push(nums);
-        return vecs
-    }
+    let mut vecs: Vec<Vec<i32>> = Vec::new();
 
-    for i in 0..nums.len() {
-        let mut arr = nums.clone(); // all of the unvisted nodes
-        let v = arr.remove(i); // pull out current node
-        let children = dfs(arr); // permutate all unvisited nodes
-        // For each permutation returned, add our value to the front, and 
-        // extend our answer
-        for c in children.iter() {
-            let mut p: Vec<i32> = Vec::with_capacity(nums.len());
-            p.push(v); // add the current value first each time
-            // unwrap the permutation of the children nodes
-            for z in c.iter() {
-                p.push(*z);
+    match nums.len() {
+        0 | 1 => vecs.push(nums),
+        _ => {
+            for i in 0..nums.len() {
+                let mut arr = nums.clone(); // all of the unvisted nodes
+                let v = arr.remove(i); // pull out current node
+                let children = dfs(arr); // permutate all unvisited nodes
+                // For each permutation returned, add our value to the front, and
+                // extend our answer
+                for c in children.iter() {
+                    let mut p: Vec<i32> = Vec::with_capacity(nums.len());
+                    p.push(v); // add the current value first each time
+                    // unwrap the permutation of the children nodes
+                    for z in c.iter() {
+                        p.push(*z);
+                    }
+
+                    //save answer
+                    vecs.push(p);
+                }
             }
-
-            //save answer
-            vecs.push(p);
         }
     }
 
@@ -73,16 +78,11 @@ mod tests {
         let test_cases = vec![
             TestCase {
                 nums: vec![1],
-                expected: vec![
-                    vec![1],
-                ],
+                expected: vec![vec![1]],
             },
             TestCase {
                 nums: vec![0, 1],
-                expected: vec![
-                    vec![0, 1],
-                    vec![1, 0],
-                ],
+                expected: vec![vec![0, 1], vec![1, 0]],
             },
             TestCase {
                 nums: vec![1, 2, 3],
